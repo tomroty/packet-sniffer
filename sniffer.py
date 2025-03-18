@@ -35,6 +35,13 @@ def get_mac_addr(bytes_addr):
         str
             The MAC address in format AA:BB:CC:DD:EE:FF
     """
-    bytes_str = map('{:02x}'.format, bin_str)
-    return ':'.join(bytes_str).upper
-    
+    return ":".join(map("{:02x}".format, bytes_addr))
+
+if __name__ == '__main__':
+    connection = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
+    print("Sniffer started")
+    while True:
+        raw_data, addr = connection.recvfrom(65535)
+        dest, src, protocol_type, data = unpack_ethernet_frame(raw_data)
+        print("Ethernet Frame:")
+        print("Destination: {}, Source: {}, Protocol: {}\n".format(dest, src, protocol_type))
