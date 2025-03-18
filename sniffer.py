@@ -82,6 +82,28 @@ def get_ipv4_addr(bytes_addr):
     """
     return ".".join(map(str, bytes_addr))
 
+def unpack_icmp_packet(data):
+    """
+    Unpacks the ICMP packet
+    
+    Args:
+        data: bytes
+            The raw data
+            
+    Returns:
+        icmp_type: int
+            The ICMP type
+        code: int
+            The code
+        checksum: int
+            The checksum
+        data: bytes
+            The data
+    """
+    icmp_type, code, checksum = struct.unpack("! B B H", data[:4])
+    return icmp_type, code, checksum, data[4:]
+
+
 if __name__ == '__main__':
     connection = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
     print("Sniffer started")
@@ -95,5 +117,12 @@ if __name__ == '__main__':
             version, header_length, ttl, protocol, src, dest, data = unpack_ipv4_packet(data)
             print("IPv4 Packet:")
             print("Version: {}, Header Length: {}, TTL: {}, Protocol: {}, Source: {}, Destination: {}\n".format(version, header_length, ttl, protocol, src, dest))
+            print("Data:")
+            print(textwrap.indent(data.hex(), "    "))
+            
+        elif protocol_type == 1:
+            icmp_type, code, checksum, data = unpack_icmp_packet(data)
+            print("ICMP Packet:")
+            print("Type: {}, Code: {}, Checksum: {}\n".format(icmp_type, code, checksum))
             print("Data:")
             print(textwrap.indent(data.hex(), "    "))
