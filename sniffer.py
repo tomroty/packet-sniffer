@@ -184,12 +184,12 @@ if __name__ == '__main__':
         raw_data, addr = connection.recvfrom(65535)
         dest, src, protocol_type, data = unpack_ethernet_frame(raw_data)
         print("Ethernet Frame:")
-        print("Destination: {}, Source: {}, Protocol: {}\n".format(dest, src, protocol_type))
+        print("Destination: {}, Source: {}, Protocol: {:#04x}\n".format(dest, src, protocol_type))
         
         if protocol_type == 8:
             version, header_length, ttl, protocol, src, dest, data = unpack_ipv4_packet(data)
             print("IPv4 Packet:")
-            print("Version: {}, Header Length: {}, TTL: {}, Protocol: {}, Source: {}, Destination: {}\n".format(version, header_length, ttl, protocol, src, dest))
+            print("Version: {}, Header Length: {}, TTL: {}, Protocol: {:#04x}, Source: {}, Destination: {}\n".format(version, header_length, ttl, protocol, src, dest))
             print("Data:")
             print(textwrap.indent(data.hex(), "    "))
             
@@ -217,6 +217,6 @@ if __name__ == '__main__':
         elif protocol_type == 1544:
             hardware_type, protocol_type, hardware_length, protocol_length, operation, src_mac, src_ip, dest_mac, dest_ip = unpack_arp_packet(data)
             print("ARP Packet:")
-            print("Hardware Type: {}, Protocol Type: {}, Hardware Length: {}, Protocol Length: {}, Operation: {}, Source MAC: {}, Source IP: {}, Destination MAC: {}, Destination IP: {}\n".format(hardware_type, protocol_type, hardware_length, protocol_length, operation, src_mac, src_ip, dest_mac, dest_ip))
+            print("Hardware Type: {:#04x}, Protocol Type: {:#04x}, Hardware Length: {}, Protocol Length: {}, Operation: {}, Source MAC: {}, Source IP: {}, Destination MAC: {}, Destination IP: {}\n".format(hardware_type, protocol_type, hardware_length, protocol_length, operation, src_mac, src_ip, dest_mac, dest_ip))
         
         print("\n-------------------------------------------------------------------------------------------------------\n")
