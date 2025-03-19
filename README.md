@@ -68,7 +68,3 @@ Data:
 - Currently only works on Linux systems
 - Does not reassemble fragmented packets
 - Limited protocol support (no IPv6, no application layer protocols)
-
-## License
-
-[MIT](LICENSE)
