@@ -145,6 +145,37 @@ def unpack_udp_segment(data):
     src_port, dest_port, length = struct.unpack("! H H H", data[:6])
     return src_port, dest_port, length, data[6:]
 
+def unpack_arp_packet(data):
+    """
+    Unpacks the ARP packet
+    
+    Args:
+        data: bytes
+            The raw data
+            
+    Returns:
+        hardware_type: int
+            The hardware type
+        protocol_type: int
+            The protocol type
+        hardware_length: int
+            The hardware length
+        protocol_length: int
+            The protocol length
+        operation: int
+            The operation
+        src_mac: str
+            The source MAC address
+        src_ip: str
+            The source IP address
+        dest_mac: str
+            The destination MAC address
+        dest_ip: str
+            The destination IP address
+    """
+    hardware_type, protocol_type, hardware_length, protocol_length, operation = struct.unpack("! H H B B H", data[:8])
+    return hardware_type, protocol_type, hardware_length, protocol_length, operation, get_mac_addr(data[8:14]), get_ipv4_addr(data[14:18]), get_mac_addr(data[18:24]), get_ipv4_addr(data[24:28])
+
 
 if __name__ == '__main__':
     connection = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
@@ -182,4 +213,10 @@ if __name__ == '__main__':
             print("Source Port: {}, Destination Port: {}, Length: {}\n".format(src_port, dest_port, length))
             print("Data:")
             print(textwrap.indent(data.hex(), "    "))
+
+        elif protocol_type == 1544:
+            hardware_type, protocol_type, hardware_length, protocol_length, operation, src_mac, src_ip, dest_mac, dest_ip = unpack_arp_packet(data)
+            print("ARP Packet:")
+            print("Hardware Type: {}, Protocol Type: {}, Hardware Length: {}, Protocol Length: {}, Operation: {}, Source MAC: {}, Source IP: {}, Destination MAC: {}, Destination IP: {}\n".format(hardware_type, protocol_type, hardware_length, protocol_length, operation, src_mac, src_ip, dest_mac, dest_ip))
+        
         print("\n-------------------------------------------------------------------------------------------------------\n")
