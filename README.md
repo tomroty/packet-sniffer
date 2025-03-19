@@ -22,7 +22,7 @@ A lightweight Python-based packet sniffer that captures and analyzes network tra
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/packet-sniffer.git
+   git clone https://github.com/tomroty/packet-sniffer.git
    cd packet-sniffer
    ```
 
