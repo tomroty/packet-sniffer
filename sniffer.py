@@ -103,6 +103,48 @@ def unpack_icmp_packet(data):
     icmp_type, code, checksum = struct.unpack("! B B H", data[:4])
     return icmp_type, code, checksum, data[4:]
 
+def unpack_tcp_segment(data):
+    """
+    Unpacks the TCP segment
+    
+    Args:
+        data: bytes
+            The raw data
+            
+    Returns:
+        src_port: int
+            The source port
+        dest_port: int
+            The destination port
+        sequence: int
+            The sequence number
+        data: bytes
+            The data
+    """
+    src_port, dest_port, sequence = struct.unpack("! H H L", data[:8])
+    return src_port, dest_port, sequence, data[8:]
+
+def unpack_udp_segment(data):
+    """
+    Unpacks the UDP segment
+    
+    Args:
+        data: bytes
+            The raw data
+            
+    Returns:
+        src_port: int
+            The source port
+        dest_port: int
+            The destination port
+        length: int
+            The length
+        data: bytes
+            The data
+    """
+    src_port, dest_port, length = struct.unpack("! H H H", data[:6])
+    return src_port, dest_port, length, data[6:]
+
 
 if __name__ == '__main__':
     connection = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
@@ -126,3 +168,18 @@ if __name__ == '__main__':
             print("Type: {}, Code: {}, Checksum: {}\n".format(icmp_type, code, checksum))
             print("Data:")
             print(textwrap.indent(data.hex(), "    "))
+
+        elif protocol_type == 6:
+            src_port, dest_port, sequence, data = unpack_tcp_segment(data)
+            print("TCP Segment:")
+            print("Source Port: {}, Destination Port: {}, Sequence: {}\n".format(src_port, dest_port, sequence))
+            print("Data:")
+            print(textwrap.indent(data.hex(), "    "))
+
+        elif protocol_type == 17:
+            src_port, dest_port, length, data = unpack_udp_segment(data)
+            print("UDP Segment:")
+            print("Source Port: {}, Destination Port: {}, Length: {}\n".format(src_port, dest_port, length))
+            print("Data:")
+            print(textwrap.indent(data.hex(), "    "))
+        print("\n-------------------------------------------------------------------------------------------------------\n")
